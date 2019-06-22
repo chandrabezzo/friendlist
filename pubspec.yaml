@@ -39,6 +39,7 @@ dependencies:
   equatable: ^0.2.6
   url_launcher: ^5.0.3
   cloud_firestore: ^0.12.5+2
+  intro_views_flutter: ^2.6.0
 
 dev_dependencies:
   flutter_test:

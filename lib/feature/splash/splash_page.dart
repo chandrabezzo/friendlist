@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:friendlist/feature/friends/friends.dart';
+import 'package:friendlist/feature/onboarding/onboarding_page.dart';
 import 'package:friendlist/util/localization_util.dart';
 
 class SplashPage extends StatefulWidget {
@@ -20,7 +21,7 @@ class _SplashPageState extends State<SplashPage> {
 
     Timer(Duration(seconds: 3), (){
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: 
-        (BuildContext) => FriendsPage()
+        (BuildContext) => OnboardingPage()
       ));
     });
   }
