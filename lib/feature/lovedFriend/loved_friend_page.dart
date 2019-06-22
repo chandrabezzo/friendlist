@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:friendlist/data/model/friend.dart';
 import 'package:friendlist/feature/detailFriend/detail_friend_page.dart';
 import 'package:friendlist/feature/lovedFriend/loved_friend_bloc.dart';
 import 'package:friendlist/util/localization_util.dart';
@@ -34,52 +36,42 @@ class _LovedFriendPageState extends State<LovedFriendPage> {
     _bloc = BlocProvider.of<LovedFriendBloc>(context);
 
     return Scaffold(
-      body: BlocListener(
-        bloc: _bloc,
-        listener: (BuildContext context, LovedFriendState state){
-          if(state is LovedFriendLoading){
-            _bloc.dispatch(OnInitial());
-          }
-        },
-        child: BlocBuilder<LovedFriendEvent, LovedFriendState>(
-          bloc: _bloc,
-          builder: (BuildContext context, LovedFriendState state){
-            if(state is LovedFriendLoaded){
-              return _buildList();
-            }
-            else if(state is LovedFriendError){
-              return RaisedButton(
-                onPressed: (){
-                  _bloc.dispatch(OnButtonRetryPressed());
-                },
-                color: Colors.blueGrey[800],
-                child: Text(LocalizationUtil.of(context).getValue(Retry)),
-              );
-            }
-            else {
-              return Center(child: PlatformCircularProgressIndicator());
-            }
-          },
-        ),
-      ),
+      body: Center(child: _buildList()),
     );
   }
 
   Widget _buildList(){
-    return ListView.builder(
-      itemCount: 30,
-      itemBuilder: (BuildContext context, int position){
-        return GestureDetector(
-          onTap: (){
-            print("tap at $position");
-          },
-          child: _buildListItem(),
-        );
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('love_friends').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError)
+          return Text('Error: ${snapshot.error}');
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting: return PlatformCircularProgressIndicator();
+          default:
+            return ListView(
+              children: snapshot.data.documents.map((DocumentSnapshot document) {
+                return _buildListItem(document);
+              }).toList(),
+            );
+        }
       },
     );
   }
 
-  Widget _buildListItem(){
+  Widget _buildListItem(DocumentSnapshot document){
+    final friend = Friend(
+      alamat: document['alamat'],
+      birthday: document['birthday'],
+      email: document['email'],
+      firstName: document['first'],
+      lastName: document['last'],
+      latitude: document['latitude'],
+      longitude: document['longitude'],
+      phoneNumber: document['phone_number'],
+      picture: document['picture']
+    );
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -95,16 +87,16 @@ class _LovedFriendPageState extends State<LovedFriendPage> {
               decoration: new BoxDecoration(
                 shape: BoxShape.circle,
                 image: new DecorationImage(
-                  image: NetworkImage("https://randomuser.me/api/portraits/med/women/40.jpg"),
+                  image: NetworkImage(document['picture']),
                   fit: BoxFit.cover,
                 ),
               )),
-            title: Text("Hernita"),
-            subtitle: Text("Jl. Buahdua"),
-            trailing: Icon(Icons.favorite, color: Colors.blueGrey[800]),
+            title: Text("${document['first']} ${document['last']}"),
+            subtitle: Text("${document['alamat']}"),
+            trailing: Icon(Icons.favorite, color: Colors.red),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(builder: 
-                (BuildContext context) => DetailFriendPage()
+                (BuildContext context) => DetailFriendPage(friend)
               ));
             }
           ),

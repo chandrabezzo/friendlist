@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:friendlist/data/model/friend.dart';
 import 'package:friendlist/data/model/person_response.dart';
 import 'package:friendlist/feature/detailFriend/detail_friend_page.dart';
 import 'package:friendlist/feature/person/person.dart';
@@ -82,6 +83,22 @@ class _PersonPageState extends State<PersonPage> {
   }
 
   Widget _buildListItem(Result result){
+    final day = result.dob.date.day;
+    final month = result.dob.date.month;
+    final year = result.dob.date.year;
+
+    final friend = Friend(
+      alamat: "${result.location.street}, ${result.location.city}, ${result.location.state}",
+      birthday: "$day/$month/$year",
+      firstName: result.name.first,
+      lastName: result.name.last,
+      email: result.email,
+      latitude: result.location.coordinates.latitude,
+      longitude: result.location.coordinates.longitude,
+      phoneNumber: result.phone,
+      picture: result.picture.large
+    );
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -106,7 +123,7 @@ class _PersonPageState extends State<PersonPage> {
             trailing: Icon(Icons.favorite, color: Colors.blueGrey[800]),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(builder: 
-                (BuildContext context) => DetailFriendPage()
+                (BuildContext context) => DetailFriendPage(friend)
               ));
             }
           ),
