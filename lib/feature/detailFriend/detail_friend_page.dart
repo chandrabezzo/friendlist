@@ -5,8 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:friendlist/data/model/friend.dart';
 import 'package:friendlist/feature/detailFriend/detail_friend.dart';
+import 'package:friendlist/feature/friends/friends_page.dart';
 import 'package:friendlist/util/cloud_firestore_util.dart';
+import 'package:friendlist/util/localization_util.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:core/util/common_util.dart';
 
 class DetailFriendBuilder extends StatelessWidget {
   final Friend people;
@@ -41,6 +45,7 @@ class _DetailFriendPageState extends State<DetailFriendPage> with SingleTickerPr
   final _emailController = TextEditingController();
   final _tanggalLahirController = TextEditingController();
   final _noHandphoneController = TextEditingController();
+  FlutterLocalNotificationsPlugin localNotif;
 
   @override
   void initState() {
@@ -51,6 +56,12 @@ class _DetailFriendPageState extends State<DetailFriendPage> with SingleTickerPr
     _emailController.text = widget.people.email;
     _tanggalLahirController.text = widget.people.birthday;
     _noHandphoneController.text = widget.people.phoneNumber;
+
+    var androidSettingsNotification = AndroidInitializationSettings('@drawable/notif_icon');
+    var iosSettingsNotification = IOSInitializationSettings();
+    var notificationSettings = InitializationSettings(androidSettingsNotification, iosSettingsNotification);
+    localNotif = FlutterLocalNotificationsPlugin();
+    localNotif.initialize(notificationSettings, onSelectNotification: onSelectNotification);
   }
 
   @override
@@ -171,7 +182,10 @@ class _DetailFriendPageState extends State<DetailFriendPage> with SingleTickerPr
                 onPressed: (){
                   var friend = _buildFriend(widget.people);
                   CloudFirestoreUtils.saveOrUpdatePerson(friend);
-                  Fluttertoast.showToast(msg: "Penambahan Berhasil");
+                  var saveSuccess = LocalizationUtil.of(context).getValue(SaveSuccess);
+                  _showNotification(LocalizationUtil.of(context).getValue(AppTitle), 
+                    "${friend.firstName} ${friend.lastName} $saveSuccess"
+                  );
                   Navigator.pop(context);
                 },
                 color: Colors.blueGrey[800],
@@ -205,5 +219,34 @@ class _DetailFriendPageState extends State<DetailFriendPage> with SingleTickerPr
       phoneNumber: _noHandphoneController.text,
       picture: person.picture
     );
+  }
+
+  Future onSelectNotification(String payload) async {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: 
+      (context) => FriendsPage()
+    ));
+  }
+
+  Future _showNotification(String title, String message) async {
+    var appName = LocalizationUtil.of(context).getValue(AppTitle);
+
+    var packageName;
+    CommonUtil.packageName().then((value){
+      packageName = value;
+    });
+
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      packageName ?? "channel_id", appName, 'Notification',
+      importance: Importance.Max, priority: Priority.High
+    );
+
+    var iosPlatformChannelSpecifics = IOSNotificationDetails();
+
+    var platformChannelSpecifics = NotificationDetails(
+      androidPlatformChannelSpecifics, iosPlatformChannelSpecifics
+    );
+
+    await localNotif.show(0, title, message, platformChannelSpecifics, 
+      payload: 'Default_Sound');
   }
 }

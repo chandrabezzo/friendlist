@@ -82,8 +82,8 @@ class _LovedFriendPageState extends State<LovedFriendPage> {
           ),
           child: ListTile(
             leading: Container(
-              width: 60.0,
-              height: 60.0,
+              width: 50.0,
+              height: 50.0,
               decoration: new BoxDecoration(
                 shape: BoxShape.circle,
                 image: new DecorationImage(
@@ -92,7 +92,10 @@ class _LovedFriendPageState extends State<LovedFriendPage> {
                 ),
               )),
             title: Text("${document['first']} ${document['last']}"),
-            subtitle: Text("${document['alamat']}"),
+            subtitle: Text("${document['alamat']}", 
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
             trailing: Icon(Icons.favorite, color: Colors.red),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(builder: 

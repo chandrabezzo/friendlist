@@ -109,8 +109,8 @@ class _PersonPageState extends State<PersonPage> {
           ),
           child: ListTile(
             leading: Container(
-              width: 60.0,
-              height: 60.0,
+              width: 50.0,
+              height: 50.0,
               decoration: new BoxDecoration(
                 shape: BoxShape.circle,
                 image: new DecorationImage(
@@ -119,7 +119,10 @@ class _PersonPageState extends State<PersonPage> {
                 ),
               )),
             title: Text("${result.name.first} ${result.name.last}"),
-            subtitle: Text("${result.location.street} ${result.location.city} ${result.location.state}"),
+            subtitle: Text("${result.location.street} ${result.location.city} ${result.location.state}", 
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
             trailing: Icon(Icons.favorite, color: Colors.blueGrey[800]),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(builder: 

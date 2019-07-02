@@ -18,7 +18,7 @@ class MyApp extends StatefulWidget {
     _MyAppState state = context.ancestorStateOfType(TypeMatcher<_MyAppState>());
 
     state.setState((){
-      SessionUtil.getAsString(LANGUAGE, "en").then((code) {
+      SessionUtil.getAsString(LANGUAGE, "id").then((code) {
         state.locale = Locale(code, '');
       });
     });
