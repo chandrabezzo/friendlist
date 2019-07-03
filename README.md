@@ -1,12 +1,12 @@
 # FriendList
 
-PEOPLE LIST
+## PEOPLE LIST
 ![alt text](https://github.com/chandrabezzo/friendlist/blob/master/people_list.png)
 
-LOVED PEOPLE
+## LOVED PEOPLE
 ![alt text](https://github.com/chandrabezzo/friendlist/blob/master/loved_friend.png)
 
-DETAIL PERSONAL INFORMATION
+## DETAIL PERSONAL INFORMATION
 ![alt text](https://github.com/chandrabezzo/friendlist/blob/master/detail_friend.png)
 
 ## Struktur Project
