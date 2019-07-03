@@ -9,7 +9,7 @@
 ## DETAIL PERSONAL INFORMATION
 ![alt text](https://github.com/chandrabezzo/friendlist/blob/master/detail_friend.png)
 
-## Struktur Project
+## Penjelasan Project
 
 Arsitektur yang digunakan pada project ini adalah BLOC. Pada repository ini hanya tersedia untuk bagian pembangunan User Interface dari aplikasi saja. Bagian core dari aplikasi ini tidak disertakan, jika anda ingin mengetahui lebih lanjut silahkan hubungi secara langsung ke chandraaf28@gmail.com dengan subject FriendList.
 
